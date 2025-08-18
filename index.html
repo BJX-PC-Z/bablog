@@ -3,21 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <title>设施良心保安のSITE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="center">
-    <h1 class="main-title">设施良心保安のSITE</h1>
-    <a class="bilibili-link" href="https://space.bilibili.com/1964084007?spm_id_from=333.1007.0.0" target="_blank">
-      我的bilibili主页
-    </a>
+  <div id="container">
+    <!-- 首页分屏 -->
+    <section class="screen home-screen" id="home">
+      <h1 class="main-title">设施良心保安のSITE</h1>
+      <a class="bilibili-link" href="https://space.bilibili.com/1964084007?spm_id_from=333.1007.0.0" target="_blank">我的bilibili主页</a>
+    </section>
+
+    <!-- 目录分屏（第二页） -->
+    <section class="screen catalog-screen" id="catalog">
+      <div class="catalog-title">目录</div>
+      <ul class="catalog-list">
+        <li>
+          <button class="catalog-link" onclick="goToScreen(0)">首页</button>
+        </li>
+        <!-- 以后可在此处添加更多内容目录 -->
+      </ul>
+    </section>
   </div>
-  <script>
-    document.body.style.opacity = "0";
-    setTimeout(function() {
-      document.body.style.transition = "opacity 0.4s cubic-bezier(0.77,0,0.175,1)";
-      document.body.style.opacity = "1";
-    }, 20);
-  </script>
+  <script src="main.js"></script>
 </body>
 </html>
