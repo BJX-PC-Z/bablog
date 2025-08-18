@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设施良心保安のSITE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 基础样式和变量定义 */
+        :root {
+            --light-bg: #ffffff;
+            --light-text: #000000;
+            --dark-bg: #000000;
+            --dark-text: #ffffff;
+            --accent-color: #ff5e5e;
+            --transition-speed: 0.5s;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: var(--dark-bg);
+                --text-color: var(--dark-text);
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg-color: var(--light-bg);
+                --text-color: var(--light-text);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            transition: background-color var(--transition-speed);
+            line-height: 1.6;
+        }
+
+        /* 页面容器 */
+        .page {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        /* 首页样式 */
+        #home {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .main-title {
+            font-family: 'Courier New', monospace;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: slideUp 1s forwards 0.3s;
+        }
+
+        .bilibili-link {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 1s forwards 0.6s;
+        }
+
+        .bilibili-link:hover {
+            opacity: 1;
+            color: var(--accent-color);
+        }
+
+        /* 目录页样式 */
+        #toc {
+            flex-direction: column;
+            align-items: flex-start;
+            padding-top: 100px;
+        }
+
+        .toc-header {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            letter-spacing: 2px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.8s forwards 0.4s;
+        }
+
+        .toc-content {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUp 0.8s forwards 0.6s;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin: 1.2rem 0;
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            border-left: 3px solid var(--accent-color);
+            padding-left: 20px;
+            transition: transform 0.3s;
+        }
+
+        .toc-item:hover {
+            transform: translateX(10px);
+        }
+
+        .toc-link {
+            text-decoration: none;
+            color: var(--text-color);
+            transition: color 0.3s;
+            position: relative;
+            display: inline-block;
+        }
+
+        .toc-link:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: width 0.3s;
+        }
+
+        .toc-link:hover {
+            color: var(--accent-color);
+        }
+
+        .toc-link:hover:after {
+            width: 100%;
+        }
+
+        /* 内容页样式 */
+        .content-page {
+            max-width: 900px;
+            width: 100%;
+            padding: 100px 20px 50px;
+            margin: 0 auto;
+        }
+
+        .article {
+            background: rgba(128, 128, 128, 0.05);
+            border-radius: 10px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .article.animate {
+            animation: slideUp 0.8s forwards;
+        }
+
+        .article-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .article-title {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .article-date {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .article-content {
+            margin-top: 20px;
+        }
+
+        .article-content p {
+            margin: 15px 0;
+            font-size: 1.1rem;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .article-content iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .back-to-toc {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background: rgba(128, 128, 128, 0.1);
+            border-radius: 5px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+
+        .back-to-toc:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* 操作指南样式 */
+        .guide-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background: rgba(128, 128, 128, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .guide-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+
+        .guide-step {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(128, 128, 128, 0.03);
+            border-radius: 5px;
+        }
+
+        .guide-step h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .guide-step h3 i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .code-comment {
+            color: #666;
+            font-style: italic;
+        }
+
+        /* 动画定义 */
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-up {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity var(--transition-speed), transform var(--transition-speed);
+        }
+
+        .slide-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .toc-header {
+                left: 20px;
+            }
+            
+            .bilibili-link {
+                left: 20px;
+            }
+            
+            .content-page {
+                padding-top: 80px;
+            }
+            
+            .article {
+                padding: 25px;
+            }
+            
+            .guide-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 首页 -->
+    <section id="home" class="page">
+        <h1 class="main-title">设施良心保安のSITE</h1>
+        <a href="https://space.bilibili.com/1964084007?spm_id_from=333.1007.0.0" class="bilibili-link" target="_blank">
+            我的bilibili主页 <i class="fas fa-external-link-alt"></i>
+        </a>
+    </section>
+
+    <!-- 目录页 -->
+    <section id="toc" class="page">
+        <h2 class="toc-header">目录</h2>
+        <div class="toc-content">
+            <ul class="toc-list">
+                <li class="toc-item">
+                    <a href="#home" class="toc-link scroll-link">首页</a>
+                </li>
+                <li class="toc-item">
+                    <a href="#qwq-ba001" class="toc-link scroll-link">关于这个博客</a>
+                </li>
+		<li class="toc-item">
+                    <a href="#qwq-ba002" class="toc-link scroll-link">文章管理指南</a>
+		</li>
+		<li class="toc-item">
+    		    <a href="#qwq-ba003" class="toc-link scroll-link">我想玩秘密实验室</a>
+		</li>
+		<li class="toc-item">
+    		    <a href="#qwq-ba004" class="toc-link scroll-link">仿真-斯南拉核电站事故</a>
+		</li>
+
+             </ul>
+        </div>
+    </section>
+
+    <!-- 文章内容页 -->
+    <section id="qwq-ba001" class="page content-page">
+        <article class="article slide-up">
+            <div class="article-header">
+                <h2 class="article-title">关于这个博客</h2>
+                <div class="article-date">发布于：2025年8月18日</div>
+            </div>
+            <div class="article-content">
+                <p>欢迎来到“设施良心保安のSITE”，我打算在这里分享我的想法！（其实就是显得发慌而已 awa ）</p>
+                
+                <p>咳咳！那么这里就是我的博客啦~我的一个SITE！</p>
+                                
+                <p>我会在这个博客上发表一些东西，可以是一些图片，一些文字，或者单纯发癫，反正很好玩就对了~ QWQ </p>
+
+		<p>emmmm...差不多就这样吧——那么，希望我不会让这个博客放在角落吃灰！快往下滑或者去目录看看有没有什么其它好玩的内容吧！</p>
+                
+                <a href="#toc" class="back-to-toc scroll-link">返回目录</a>
+            </div>
+        </article>
+    </section>
+
+    <!-- 文章管理指南 -->
+    <section id="qwq-ba002" class="page content-page">
+        <article class="article slide-up">
+            <div class="article-header">
+                <h2 class="article-title">文章管理指南</h2>
+                <div class="article-date">发布于：2025年8月18日</div>
+            </div>
+            <div class="article-content">
+			<p>嘻嘻，其实这个是我怕自己忘记了才写的，你好像不是很需要这个...（挠头）</P>
+                <div class="guide-container">
+                    <h2 class="guide-title">如何添加/删除文章</h2>
+                    
+                    <div class="guide-step">
+                        <h3><i class="fas fa-plus-circle"></i> 添加新文章</h3>
+                        <p>在HTML文件中找到以下代码部分，按照步骤操作：</p>
+                        
+                        <div class="code-block">
+                            <span class="code-comment">&lt;!-- 1. 在目录中添加新文章链接 --&gt;</span><br>
+                            &lt;ul class="toc-list"&gt;<br>
+                            &nbsp;&nbsp;&lt;li class="toc-item"&gt;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&lt;a href="#<mark>new-article-id</mark>" class="toc-link scroll-link"&gt;<mark>新文章标题</mark>&lt;/a&gt;<br>
+                            &nbsp;&nbsp;&lt;/li&gt;<br>
+                            &lt;/ul&gt;
+                        </div>
+                        
+                        <div class="code-block">
+                            <span class="code-comment">&lt;!-- 2. 添加新文章内容部分 --&gt;</span><br>
+                            &lt;section id="<mark>new-article-id</mark>" class="page content-page"&gt;<br>
+                            &nbsp;&nbsp;&lt;article class="article slide-up"&gt;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="article-header"&gt;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;h2 class="article-title"&gt;<mark>新文章标题</mark>&lt;/h2&gt;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="article-date"&gt;发布于：<mark>YYYY年MM月DD日</mark>&lt;/div&gt;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="article-content"&gt;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<mark>&lt;!-- 在这里添加你的文章内容 --&gt;</mark><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;这里是你的文章内容...&lt;/p&gt;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;img src="图片URL" alt="图片描述"&gt;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a href="#toc" class="back-to-toc scroll-link"&gt;返回目录&lt;/a&gt;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br>
+                            &nbsp;&nbsp;&lt;/article&gt;<br>
+                            &lt;/section&gt;
+                        </div>
+                        
+                        <p><strong>注意事项：</strong></p>
+                        <ul>
+                            <li>将 <mark>new-article-id</mark> 替换为唯一的ID（例如：article4）</li>
+                            <li>将 <mark>新文章标题</mark> 替换为你的文章标题</li>
+                            <li>确保目录中的链接ID与文章部分的ID完全匹配</li>
+                            <li>新文章应该放在已有文章之后、"文章管理指南"之前</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <h3><i class="fas fa-minus-circle"></i> 删除文章</h3>
+                        <p>在HTML文件中找到以下两个部分并删除：</p>
+                        
+                        <div class="code-block">
+                            <span class="code-comment">&lt;!-- 1. 在目录中删除对应的文章链接 --&gt;</span><br>
+                            &lt;ul class="toc-list"&gt;<br>
+                            &nbsp;&nbsp;&lt;li class="toc-item"&gt;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&lt;a href="#<mark>article-to-delete</mark>" class="toc-link scroll-link"&gt;<mark>要删除的文章标题</mark>&lt;/a&gt;<br>
+                            &nbsp;&nbsp;&lt;/li&gt;<br>
+                            &lt;/ul&gt;
+                        </div>
+                        
+                        <div class="code-block">
+                            <span class="code-comment">&lt;!-- 2. 删除整个文章内容部分 --&gt;</span><br>
+                            &lt;section id="<mark>article-to-delete</mark>" class="page content-page"&gt;<br>
+                            &nbsp;&nbsp;&lt;article class="article slide-up"&gt;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<mark>...整个文章内容...</mark><br>
+                            &nbsp;&nbsp;&lt;/article&gt;<br>
+                            &lt;/section&gt;
+                        </div>
+                        
+                        <p><strong>注意事项：</strong></p>
+                        <ul>
+                            <li>确保同时删除目录中的链接和文章内容部分</li>
+                            <li>删除后检查页面结构是否完整</li>
+                            <li>如果删除后页面出现空白区域，可能是删除了闭合标签导致的</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <h3><i class="fas fa-code"></i> 文章内容格式参考</h3>
+                        <p>在文章内容部分，你可以使用以下HTML标签：</p>
+                        
+                        <div class="code-block">
+                            &lt;p&gt;段落文本&lt;/p&gt;<br>
+                            &lt;h3&gt;小标题&lt;/h3&gt;<br>
+                            &lt;ul&gt;<br>
+                            &nbsp;&nbsp;&lt;li&gt;列表项1&lt;/li&gt;<br>
+                            &nbsp;&nbsp;&lt;li&gt;列表项2&lt;/li&gt;<br>
+                            &lt;/ul&gt;<br>
+                            &lt;img src="图片URL" alt="图片描述"&gt;<br>
+                            &lt;iframe src="视频嵌入代码"&gt;&lt;/iframe&gt;<br>
+                            &lt;a href="链接URL"&gt;超链接文本&lt;/a&gt;
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="#toc" class="back-to-toc scroll-link">返回目录</a>
+            </div>
+        </article>
+    </section>
+
+    <section id="qwq-ba003" class="page content-page">
+        <article class="article slide-up">
+            <div class="article-header">
+                <h2 class="article-title">我要玩秘密实验室</h2>
+                <div class="article-date">发布于：2025年8月18日</div>
+             </div>
+    	     <div class="article-content">
+                 <p>我要当一次博士，拿着索尼哔哔去914找正忙着早饭的DD们，咦嘻嘻~QWQ</p>
+		 <p>太好了！是嘟嘟哒！surprise！！！</p>
+                 <a href="#toc" class="back-to-toc scroll-link">返回目录</a>
+            </div>
+      </article>
+    </section>
+
+    <section id="qwq-ba004" class="page content-page">
+        <article class="article slide-up">
+            <div class="article-header">
+                <h2 class="article-title">仿真-斯南拉核电站事故</h2>
+                <div class="article-date">发布于：2025年8月19日</div>
+             </div>
+    	     <div class="article-content">
+                 <p>1967年4月，美国斯南拉核电站发生了一起严重的核事故，导致大量人员受到辐射影响。据统计，约三万人罹患辐射病，受影响人群的平均年龄低于35岁。这场灾难的根本原因，经事后调查确认，源于控制室一个关键数据显示系统的误操作。</p>
+		 <p>4月23日晚，操作员麦道夫·乔尔在23号核反应堆控制室值班。当晚8点30分至11点期间，反应堆运行参数未见异常。临近11点02分交接班时，乔尔在操作控制台时，本意是刷新监控数据，但误触了邻近的“数据锁定”功能键。这一操作导致主控制台显示屏上的关键参数（包括温度、水位等）被锁定在11点02分那一刻的读数，无法再实时更新反映反应堆内部的实际状态。</p>
+		 <p>接替乔尔的操作员赛尔斯·特尔及其同事，在接下来的近40分钟内，监测到的始终是11点02分的“冻结”数据。因此，他们对反应堆内实际发生的危险毫无察觉。事实上，由于冷却水系统出现不明原因的泄漏，冷却水量持续下降。随着冷却水的减少，反应堆堆芯温度开始急剧上升，远超安全阈值，冷却水逐渐沸腾并加速蒸发。</p>
+                  <p>大约在11点20分，控制室曾触发高温警报。然而，特尔基于锁定的、显示“正常”的数据判断为误报，并按常规流程关闭了警报。此时，反应堆内部温度已超过1300摄氏度，危机已然形成。</p>
+                  <p>直到11点45分左右，特尔注意到监控数据的异常稳定性（实为锁定状态下的假象），产生了疑虑。他随即通过内部通讯系统，要求现场工作人员琼斯·比利前往23号反应堆厂房进行实地检查。</p>
+		  <p>当比利抵达反应堆厂房上方观察点时，眼前景象令人震惊：冷却水已几近耗尽，约三分之二的核燃料棒直接暴露在空气中，反应堆处于极度危险的高温状态。比利立即通过通讯设备向控制室发出紧急警告：“23号反应堆冷却水严重不足！堆芯暴露，极可能发生爆炸！” 同时，他迅速向应急出口撤离。</p>
+                  <p>特尔接到警告后，立即尝试解除数据锁定并刷新显示。刷新后的真实数据瞬间显示堆芯温度已高达1531.62℃。特尔立刻启动了紧急停堆系统（紧急冷却按钮），指令控制棒紧急插入堆芯试图终止链式反应。</p>
+                  <p>然而，为时已晚。在高温且缺乏足够冷却剂的环境下，堆芯材料已发生严重熔毁。控制棒插入的瞬间，引发了剧烈的蒸汽爆炸（或可能伴随其他化学反应）。猛烈的爆炸摧毁了反应堆压力容器及安全壳结构。不幸的是，当时仍在厂区内的琼斯·比利在爆炸中当场死亡。</p>
+                  <p>爆炸导致大量放射性物质泄漏到环境中。从1967年4月24日到6月28日，美国政府组织了大规模的应急响应，在超过30个国家的支援下，投入近万名救援人员，紧急疏散了周边约6万名居民，并将超过4000平方公里的区域划定为长期禁区。此次事故的直接与间接后果极为严重，最终确认的死亡人数超过两万人，罹患辐射病者达三万之众，且受害者普遍年轻。</p>
+                  <p>斯南拉核事故成为全球核能发展史上一个惨痛的转折点。它深刻暴露了人机界面设计缺陷（如关键功能键缺乏防误操作保护）、操作规程执行不严以及人员安全意识薄弱等问题。事故发生后，美国政府彻底修订了核安全法规，对全国所有在运核电站强制进行了全面的设备升级（特别是控制室安全系统和事故监测系统）和人员资质审查与再培训，旨在从根本上杜绝此类因人为操作失误叠加系统设计漏洞而导致的灾难性事故再次发生。</p>
+                   <p>（以上内容为文学创作，纯属虚构，切勿当真！）</p>
+                 <a href="#toc" class="back-to-toc scroll-link">返回目录</a>
+            </div>
+      </article>
+    </section>
+    <script>
+
+
+        // 平滑滚动功能
+        document.querySelectorAll('.scroll-link').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    // 添加滚动动画类
+                    document.querySelectorAll('.slide-up').forEach(el => {
+                        el.classList.remove('visible');
+                    });
+                    
+                    // 平滑滚动到目标位置
+                    window.scrollTo({
+                        top: targetElement.offsetTop,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 短暂延迟后添加动画类
+                    setTimeout(() => {
+                        const articles = targetElement.querySelectorAll('.slide-up');
+                        if(articles.length > 0) {
+                            articles.forEach((article, index) => {
+                                setTimeout(() => {
+                                    article.classList.add('visible');
+                                }, 150 * index);
+                            });
+                        }
+                    }, 500);
+                }
+            });
+        });
+
+        // 滚动动画观察器
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            document.querySelectorAll('.slide-up').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // 初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            // 初始化滚动动画
+            initScrollAnimations();
+        });
+    </script>
+</body>
+</html>
